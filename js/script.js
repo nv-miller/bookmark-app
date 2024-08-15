@@ -29,22 +29,43 @@ const updateBookmarks = (bookmarks) => {
 	}
 }
 
-// Event Listeners
-showModalBtn.addEventListener("click", function (e) {
-	modal.showModal()
-})
+// Validate form fields
+const validate = (title, url) => {
+	const regexp = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/g
+	if (!title || !url) {
+		alert('Please submit values for both fields')
+		return false
+	}
+	if (!url.match(regexp)) {
+		alert('Please provide a valid URL')
+		return false
+	}
+	return true
+}
 
-bookmarkForm.addEventListener("submit", (e) => {
+
+// process form submitting
+const handleFormSubmit = (e) => {
 	e.preventDefault()
-	const bookmarkTitle = e.target[0].value
-	const bookmarkURL = e.target[1].value
-	if (bookmarkTitle && bookmarkURL) {
+	const bookmarkTitle = e.target['website-title'].value
+	const bookmarkURL = e.target['website-url'].value.includes('http://') || e.target['website-url'].value.includes('https://')
+		? e.target['website-url'].value.split('//')[1]
+		: e.target['website-url'].value
+	const isValidate = validate(bookmarkTitle, bookmarkURL)
+	if (isValidate) {
 		bookmarks.push({ title: bookmarkTitle, url: bookmarkURL })
 		updateBookmarks(bookmarks)
 		bookmarkForm.reset()
 		modal.close()
 	}
+}
+
+// Event Listeners
+showModalBtn.addEventListener("click", function (e) {
+	modal.showModal()
 })
+
+bookmarkForm.addEventListener("submit", handleFormSubmit)
 
 bookmarksContainer.addEventListener('click', (e) => {
 	const currentBtn = e.target.closest('.bookmark__delete-btn')
