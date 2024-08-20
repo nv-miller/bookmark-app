@@ -4,7 +4,15 @@ const modal = document.getElementById('modal')
 const bookmarkForm = document.getElementById('bookmark-form')
 const bookmarksContainer = document.querySelector('.app__body')
 
-let bookmarks = [{ title: 'Google', url: 'google.com' }, { title: 'Yandex', url: 'ya.ru' }]
+let bookmarks
+
+const fetchBookmarks = () => {
+	if (localStorage.getItem('bookmarks')) {
+		bookmarks = JSON.parse(localStorage.getItem('bookmarks'))
+	} else {
+		bookmarks = [{ title: 'Google', url: 'google.com' }, { title: 'Yandex', url: 'ya.ru' }]
+	}
+}
 
 const createBookmarkItem = (title, url) => {
 	return `
@@ -21,6 +29,7 @@ const createBookmarkItem = (title, url) => {
 }
 
 const updateBookmarks = (bookmarks) => {
+	localStorage.setItem('bookmarks', JSON.stringify(bookmarks))
 	bookmarksContainer.innerHTML = ''
 	if (bookmarks.length) {
 		bookmarks.forEach(({ title, url }) => {
@@ -42,7 +51,6 @@ const validate = (title, url) => {
 	}
 	return true
 }
-
 
 // process form submitting
 const handleFormSubmit = (e) => {
@@ -81,6 +89,8 @@ modal.addEventListener('click', (e) => {
 		modal.close()
 	}
 })
+
+fetchBookmarks()
 
 // on load
 updateBookmarks(bookmarks)
